@@ -18,14 +18,16 @@ export default function Settings() {
   const memberships = myMemberships(s);
 
   const logout = async () => {
-    const ok = await fb.confirm({ title: 'Sair da conta?', message: 'Seus dados continuam guardados neste aparelho.', confirmLabel: 'Sair' });
+    const ok = await fb.confirm({ title: 'Sair da conta?', message: account.isDemo() ? 'A família de exemplo continua guardada neste aparelho.' : 'Seus dados continuam guardados no servidor. É só entrar de novo.', confirmLabel: 'Sair' });
     if (ok) await account.logout();
   };
 
   const reset = async () => {
     const ok = await fb.confirm({
       title: 'Apagar todos os dados deste aparelho?',
-      message: 'Contas, famílias, tarefas e históricos guardados aqui serão removidos. Isso não pode ser desfeito.',
+      message: account.isDemo()
+        ? 'A família de exemplo e tudo o que foi feito nela serão removidos. Isso não pode ser desfeito.'
+        : 'Você sai da conta e este celular esquece o que tinha guardado. Nada é apagado do servidor: é só entrar de novo.',
       confirmLabel: 'Apagar tudo',
       destructive: true,
     });
@@ -86,7 +88,7 @@ export default function Settings() {
 
       <Section title="Sobre">
         <ListCard>
-          <Row title="Sobre esta versão" subtitle="Modo local, decisões pendentes e privacidade" left={icon('info')} onPress={() => router.push('/about')} />
+          <Row title="Sobre esta versão" subtitle="Onde ficam os dados e decisões pendentes" left={icon('info')} onPress={() => router.push('/about')} />
         </ListCard>
       </Section>
 
@@ -95,7 +97,7 @@ export default function Settings() {
         <Button label="Apagar dados deste aparelho" variant="danger" icon="trash-2" onPress={reset} />
       </View>
       <Txt v="small" center style={{ marginTop: spacing.lg }}>
-        Família Feliz · versão 1.0.0 (local)
+        Família Feliz · versão 1.0.0{account.isDemo() ? ' (exemplo)' : ''}
       </Txt>
     </Screen>
   );

@@ -49,7 +49,7 @@ export function ErrorBoundary({ retry }: ErrorBoundaryProps) {
     <View style={{ flex: 1, backgroundColor: colors.linen, justifyContent: 'center', padding: spacing.xl, gap: spacing.md }}>
       <Txt v="title">Algo saiu do lugar</Txt>
       <Txt v="body" color={colors.inkSoft}>
-        Nada do que você fez foi perdido. Os dados ficam guardados neste aparelho.
+        Nada do que você fez foi perdido. Vamos recarregar esta tela.
       </Txt>
       <FeNote mode="tranquilizar">Vamos tentar de novo? Às vezes é só um tropeço.</FeNote>
       <Button label="Tentar de novo" icon="refresh-cw" onPress={retry} />

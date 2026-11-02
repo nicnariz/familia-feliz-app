@@ -66,7 +66,7 @@ export default function Register() {
       <Field testID="register-password" label="Senha" value={password} onChangeText={setPassword} secure autoCapitalize="none" autoComplete="new-password" hint="Pelo menos 8 caracteres." />
       {error ? <Banner tone="attention" icon="info" text={error} /> : null}
       <Txt v="small" style={{ marginTop: spacing.md }}>
-        Sua conta e a sua família ficam no servidor do Família Feliz. Tarefas, recompensas e mesada, por enquanto, ficam neste aparelho.
+        Sua conta e tudo da sua família ficam no servidor do Família Feliz, para cada pessoa usar no próprio celular.
       </Txt>
     </Screen>
   );
