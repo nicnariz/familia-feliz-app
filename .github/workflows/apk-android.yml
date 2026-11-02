@@ -1,0 +1,59 @@
+# Gera o APK de teste na Expo a cada mudança publicada na main (ou manualmente, em Actions → "Run workflow").
+# Antes de gastar um build na Expo, confere se o JavaScript empacota e se o motor do Android (Hermes) aceita o código.
+name: APK Android (teste)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: apk-android
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Conferir o token da Expo
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "::error::Falta o segredo EXPO_TOKEN (GitHub → Settings → Secrets and variables → Actions)."
+            exit 1
+          fi
+
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Empacotar o JavaScript (mesma etapa do build)
+        run: npx expo export:embed --eager --platform android --dev false --bundle-output /tmp/ff/index.android.bundle --assets-dest /tmp/ff/assets
+
+      - name: Conferir no Hermes (motor do Android)
+        run: node_modules/react-native/sdks/hermesc/linux64-bin/hermesc -emit-binary -out /tmp/ff/index.android.hbc /tmp/ff/index.android.bundle
+
+      - name: Pedir o APK na Expo
+        run: |
+          eas build -p android --profile preview --non-interactive --no-wait --json > /tmp/ff/build.json
+          ID=$(node -p "require('/tmp/ff/build.json')[0].id")
+          URL="https://expo.dev/accounts/nicnarizs-team/projects/familiafeliz/builds/$ID"
+          echo "APK em preparo na Expo (10 a 20 min): $URL"
+          {
+            echo "### APK em preparo"
+            echo ""
+            echo "Abra no celular quando terminar (10 a 20 min): $URL"
+          } >> "$GITHUB_STEP_SUMMARY"

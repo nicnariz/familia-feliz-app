@@ -1,0 +1,45 @@
+{
+  "expo": {
+    "name": "Família Feliz",
+    "slug": "familiafeliz",
+    "version": "1.0.0",
+    "scheme": "familiafeliz",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#F7F3EC",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "br.com.familiafeliz.app"
+    },
+    "android": {
+      "package": "br.com.familiafeliz.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icons/adaptive-foreground-master.png",
+        "backgroundImage": "./assets/icons/adaptive-background-master.png"
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single",
+      "favicon": "./assets/icons/favicon-48.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-secure-store"
+    ],
+    "experiments": {
+      "typedRoutes": false
+    },
+    "icon": "./assets/icons/icon-1024.png",
+    "extra": {
+      "apiUrl": "https://luminous-flexibility-production-056c.up.railway.app/api/v1",
+      "router": {},
+      "eas": {
+        "projectId": "b3bb135d-feb0-4061-82eb-aaec3a5a84c6"
+      }
+    },
+    "owner": "nicnarizs-team"
+  }
+}
