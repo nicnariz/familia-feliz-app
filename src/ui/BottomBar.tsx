@@ -21,7 +21,7 @@ export function BottomBar() {
     { path: '/tasks', label: canApprove ? 'Tarefas' : 'Minhas tarefas', icon: 'check-square', owns: ['/task', '/task-edit', '/assignment', '/approvals'] },
     { path: '/rewards', label: 'Recompensas', icon: 'gift', owns: ['/reward', '/reward-edit', '/redemptions', '/wallet', '/allowance'] },
     { path: '/family', label: 'Família', icon: 'users', owns: ['/member', '/invitations', '/family-edit', '/values', '/progress', '/goal-edit'] },
-    { path: '/settings', label: 'Ajustes', icon: 'settings', owns: ['/profile', '/about', '/switch-person'] },
+    { path: '/settings', label: 'Ajustes', icon: 'settings', owns: ['/profile', '/about', '/switch-person', '/delete-account'] },
   ];
   const isActive = (it: Item) =>
     pathname === it.path || it.owns.some((p) => pathname === p || pathname.startsWith(p + '/'));

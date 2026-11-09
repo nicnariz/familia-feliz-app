@@ -1,7 +1,8 @@
 import { router } from 'expo-router';
 import React from 'react';
-import { View } from 'react-native';
+import { Linking, View } from 'react-native';
 import { roleLabel } from '../../../src/data/rules';
+import { PRIVACY_URL } from '../../../src/api/config';
 import { account } from '../../../src/data/account';
 import { myMemberships } from '../../../src/data/store';
 import { useSession } from '../../../src/hooks';
@@ -89,12 +90,17 @@ export default function Settings() {
       <Section title="Sobre">
         <ListCard>
           <Row title="Sobre esta versão" subtitle="Onde ficam os dados e decisões pendentes" left={icon('info')} onPress={() => router.push('/about')} />
+          <Row title="Política de privacidade" subtitle="Como cuidamos dos dados da família" left={icon('shield')} onPress={() => Linking.openURL(PRIVACY_URL)} />
         </ListCard>
       </Section>
 
       <View style={{ gap: spacing.xs, marginTop: spacing.xl }}>
         <Button testID="logout" label="Sair da conta" variant="secondary" icon="log-out" onPress={logout} />
-        <Button label="Apagar dados deste aparelho" variant="danger" icon="trash-2" onPress={reset} />
+        {account.isDemo() ? (
+          <Button label="Apagar dados deste aparelho" variant="danger" icon="trash-2" onPress={reset} />
+        ) : (
+          <Button testID="delete-account" label="Excluir minha conta" variant="danger" icon="user-x" onPress={() => router.push('/delete-account')} />
+        )}
       </View>
       <Txt v="small" center style={{ marginTop: spacing.lg }}>
         Família Feliz · versão 1.0.0{account.isDemo() ? ' (exemplo)' : ''}

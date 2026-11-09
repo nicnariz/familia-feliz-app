@@ -11,6 +11,11 @@ export const API_URL: string = String(
   (Constants.expoConfig?.extra as { apiUrl?: string } | undefined)?.apiUrl ?? DEFAULT_API_URL,
 ).replace(/\/+$/, '');
 
+/** Domínio do servidor (sem /api/v1), onde ficam as páginas públicas. */
+export const SITE_URL: string = API_URL.replace(/\/api\/v\d+$/, '');
+export const PRIVACY_URL = `${SITE_URL}/privacidade`;
+export const DELETE_ACCOUNT_URL = `${SITE_URL}/excluir-conta`;
+
 export function apiUrl(path: string): string {
   return `${API_URL}${path.startsWith('/') ? path : `/${path}`}`;
 }
