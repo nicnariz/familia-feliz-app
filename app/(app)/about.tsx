@@ -1,5 +1,6 @@
 import React from 'react';
-import { View } from 'react-native';
+import { Linking, View } from 'react-native';
+import { PRIVACY_URL } from '../../src/api/config';
 import { account } from '../../src/data/account';
 import { spacing } from '../../src/theme';
 import { Card, Section, Txt } from '../../src/ui/primitives';
@@ -35,6 +36,9 @@ export default function About() {
             </Txt>
           )}
           <Txt v="small">Sem internet, uma alteração não é guardada para depois: o app avisa e você tenta de novo quando a conexão voltar.</Txt>
+          <Txt v="small" style={{ textDecorationLine: 'underline' }} onPress={() => Linking.openURL(PRIVACY_URL)}>
+            Ler a política de privacidade
+          </Txt>
         </Card>
       </Section>
       <Section title="Decisões em aberto">

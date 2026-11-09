@@ -1,6 +1,7 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
-import { View } from 'react-native';
+import { Linking, View } from 'react-native';
+import { PRIVACY_URL } from '../../src/api/config';
 import { account } from '../../src/data/account';
 import { actions, errorMessage } from '../../src/data/store';
 import { colors, spacing } from '../../src/theme';
@@ -66,7 +67,11 @@ export default function Register() {
       <Field testID="register-password" label="Senha" value={password} onChangeText={setPassword} secure autoCapitalize="none" autoComplete="new-password" hint="Pelo menos 8 caracteres." />
       {error ? <Banner tone="attention" icon="info" text={error} /> : null}
       <Txt v="small" style={{ marginTop: spacing.md }}>
-        Sua conta e tudo da sua família ficam no servidor do Família Feliz, para cada pessoa usar no próprio celular.
+        Sua conta e tudo da sua família ficam no servidor do Família Feliz, para cada pessoa usar no próprio celular. Ao criar a conta, você concorda com a{' '}
+        <Txt v="small" style={{ textDecorationLine: 'underline' }} onPress={() => Linking.openURL(PRIVACY_URL)}>
+          política de privacidade
+        </Txt>
+        . Crianças e adolescentes usam o app com a supervisão de um responsável.
       </Txt>
     </Screen>
   );

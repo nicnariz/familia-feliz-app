@@ -428,6 +428,20 @@ export const account = {
     patchState((d) => void (d.pendingInviteCode = undefined));
   },
 
+  /**
+   * Exclui a conta no servidor (pede a senha). Depois esquece tudo neste aparelho.
+   * Devolve quantas famílias foram encerradas e se a administração passou para outra pessoa.
+   */
+  async deleteAccount(password: string) {
+    if (isDemo() || !getState().session?.remote) throw new AppError('DEMO', 'A família de exemplo não tem conta no servidor. Use "Apagar dados deste aparelho".');
+    let res: { closedFamilies: number; transferredFamilies: { familyId: string }[] };
+    res = await call(() => api('POST', '/account/delete', { password }));
+    queue.length = 0;
+    await clearTokens();
+    await actions.resetEverything();
+    return res;
+  },
+
   async resetEverything() {
     await clearTokens();
     await actions.resetEverything();

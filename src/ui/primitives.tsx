@@ -30,6 +30,7 @@ export function Txt({
   center,
   color,
   numberOfLines,
+  onPress,
 }: {
   v?: Variant;
   style?: StyleProp<TextStyle>;
@@ -37,12 +38,15 @@ export function Txt({
   center?: boolean;
   color?: string;
   numberOfLines?: number;
+  onPress?: () => void;
 }) {
   return (
     <Text
       numberOfLines={numberOfLines}
+      onPress={onPress}
+      suppressHighlighting
       style={[type[v], center && { textAlign: 'center' }, color ? { color } : null, style]}
-      accessibilityRole={v === 'display' || v === 'title' || v === 'heading' ? 'header' : undefined}
+      accessibilityRole={onPress ? 'link' : v === 'display' || v === 'title' || v === 'heading' ? 'header' : undefined}
     >
       {children}
     </Text>
