@@ -5,7 +5,20 @@ name: APK Android (teste)
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - '**.md'
+      - '.github/workflows/dependencias.yml'
   workflow_dispatch:
+    inputs:
+      perfil:
+        description: 'preview = APK para instalar direto; production = AAB para a Google Play'
+        type: choice
+        options: [preview, production]
+        default: preview
+      aguardar:
+        description: 'Esperar o build terminar e conferir a versão do Android (só APK)'
+        type: boolean
+        default: false
 
 concurrency:
   group: apk-android
@@ -46,10 +59,20 @@ jobs:
       - name: Conferir no Hermes (motor do Android)
         run: node_modules/react-native/sdks/hermesc/linux64-bin/hermesc -emit-binary -out /tmp/ff/index.android.hbc /tmp/ff/index.android.bundle
 
-      - name: Pedir o APK na Expo
+      - name: Pedir o build na Expo
+        env:
+          PERFIL: ${{ inputs.perfil || 'preview' }}
+          AGUARDAR: ${{ inputs.aguardar && 'sim' || 'nao' }}
         run: |
-          eas build -p android --profile preview --non-interactive --no-wait --json > /tmp/ff/build.json
+          if [ "$AGUARDAR" = "sim" ]; then WAIT="--wait"; else WAIT="--no-wait"; fi
+          eas build -p android --profile "$PERFIL" --non-interactive $WAIT --json > /tmp/ff/build.json
           ID=$(node -p "require('/tmp/ff/build.json')[0].id")
+          if [ "$AGUARDAR" = "sim" ] && [ "$PERFIL" = "preview" ]; then
+            ART=$(node -p "require('/tmp/ff/build.json')[0].artifacts.buildUrl")
+            curl -sSL "$ART" -o /tmp/ff/app.apk
+            AAPT=$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)aapt
+            "$AAPT" dump badging /tmp/ff/app.apk | grep -E "^package:|sdkVersion|targetSdkVersion" | tee -a "$GITHUB_STEP_SUMMARY"
+          fi
           URL="https://expo.dev/accounts/nicnarizs-team/projects/familiafeliz/builds/$ID"
           echo "APK em preparo na Expo (10 a 20 min): $URL"
           {

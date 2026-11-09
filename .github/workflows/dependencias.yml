@@ -1,0 +1,42 @@
+# Instala ou atualiza pacotes com a versão certa para o SDK do Expo e grava package.json + package-lock.json
+# num ramo novo (deps/<número>), para revisar e juntar. Rodar em Actions → "Dependências" → Run workflow.
+name: Dependências
+
+on:
+  workflow_dispatch:
+    inputs:
+      pacotes:
+        description: 'Pacotes para "npx expo install" (separados por espaço). Vazio = só "--fix".'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+jobs:
+  deps:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - name: Instalar
+        env:
+          PACOTES: ${{ inputs.pacotes }}
+        run: |
+          if [ -n "$PACOTES" ]; then npx expo install $PACOTES; fi
+          npx expo install --check || npx expo install --fix
+      - name: Gravar num ramo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          BR="deps/${{ github.run_number }}"
+          git checkout -b "$BR"
+          git add package.json package-lock.json
+          if git diff --cached --quiet; then echo "Nada mudou."; exit 0; fi
+          git commit -m "deps: ${{ inputs.pacotes || 'expo install --fix' }}"
+          git push origin "$BR"
+          echo "Ramo criado: $BR" >> "$GITHUB_STEP_SUMMARY"
